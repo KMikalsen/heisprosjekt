@@ -32,7 +32,7 @@ void f_stopMotor( direction_t rideDir ) {
         elev_set_speed( MAXSPEED );
 //        usleep(100000);
         elev_set_speed( NOSPEED );
-    } else { 
+    } else {
         elev_set_speed( -MAXSPEED );
 //        usleep(100000);
         elev_set_speed( NOSPEED );
@@ -41,20 +41,20 @@ void f_stopMotor( direction_t rideDir ) {
 
 void f_clearLights() {
     int i = 0;
-    for ( i = 0; i < ( N_FLOORS-1 ); ++i ) { 
+    for ( i = 0; i < ( N_FLOORS-1 ); ++i ) {
          elev_set_button_lamp( 0, i, 0 );
     }
-    for ( i = 1; i < N_FLOORS; ++i ) { 
+    for ( i = 1; i < N_FLOORS; ++i ) {
          elev_set_button_lamp( 1, i, 0 );
     }
-    for ( i = 0; i < N_FLOORS; ++i ) { 
+    for ( i = 0; i < N_FLOORS; ++i ) {
          elev_set_button_lamp( 2, i, 0 );
     }
 }
 
 void f_doorObstruction( signal_t signal ) {
     switch ( signal ) {
-    case OBSTROFF: 
+    case OBSTROFF:
         currentState = DOOROPEN;
         wait( 3.0 );
         break;
@@ -62,7 +62,7 @@ void f_doorObstruction( signal_t signal ) {
         break;
     }
 }
-	
+
 void f_doorOpen( signal_t signal ) {
     if ( elev_get_floor_sensor_signal() == -1 ){
         initialize();
@@ -73,7 +73,7 @@ void f_doorOpen( signal_t signal ) {
          wait( 3.0 );
     switch( signal ) {
         case TIMEROUT:
-              elev_set_door_open_lamp( 0 ); 
+              elev_set_door_open_lamp( 0 );
               if( emptyQueue() == 1 )
                 currentState = IDLE;
               else {
@@ -113,14 +113,14 @@ void f_idle( signal_t signal ) {
             break;
         default:
             break;
-    }    
+    }
 }
 
-void initialize() {    
+void initialize() {
     int floor = elev_get_floor_sensor_signal();
-    elev_set_speed( -MAXSPEED );	
+    elev_set_speed( -MAXSPEED );
     while ( floor == -1 )
-        floor = elev_get_floor_sensor_signal(); 
+        floor = elev_get_floor_sensor_signal();
     thisFloor = floor;
     f_stopMotor( DOWN );
     f_clearLights();
@@ -129,7 +129,7 @@ void initialize() {
     currentState = IDLE;
 }
 
-void f_moveObstruction( signal_t signal ) { 
+void f_moveObstruction( signal_t signal ) {
     switch( signal ) {
          case OBSTROFF:
              elev_set_speed( lastDirection * MAXSPEED );
@@ -138,7 +138,7 @@ void f_moveObstruction( signal_t signal ) {
         case STOP:
              elev_set_stop_lamp( 1 );
              clearOrders();
-             f_clearLights(); 
+             f_clearLights();
              currentState = STOPPEDOBSTRUCTION;
              break;
         default:
@@ -159,7 +159,7 @@ void f_moving( signal_t signal ) {
             if ( directionToGo( thisFloor, getNextOrder( thisFloor ) ) == 0 ) {
                  f_stopMotor( direction );
                  currentState = DOOROPEN;
-            } 
+            }
              break;
         case OBSTRON:
              currentState = MOVEOBSTRUCTION;
@@ -175,13 +175,13 @@ void f_stopped( signal_t signal ) {
         case OBSTRON:
             currentState = STOPPEDOBSTRUCTION;
             break;
-        case NEWORDEREMPTYQUEUE: 
+        case NEWORDEREMPTYQUEUE:
             if ( directionToGo( lastFloorReached, getNextOrder( lastFloorReached) ) == 0 )
                 elev_set_speed( lastDirection*-MAXSPEED );
             else
-                elev_set_speed( directionToGo( lastFloorReached, getNextOrder( lastFloorReached) )*MAXSPEED ); 
+                elev_set_speed( directionToGo( lastFloorReached, getNextOrder( lastFloorReached) )*MAXSPEED );
             elev_set_door_open_lamp( 0 );
-            elev_set_stop_lamp( 0 ); 
+            elev_set_stop_lamp( 0 );
             currentState = MOVING;
             break;
         default:
@@ -191,7 +191,7 @@ void f_stopped( signal_t signal ) {
     f_stopMotor( direction );
     elev_set_stop_lamp( 1 );
     clearOrders();
-    f_clearLights(); 
+    f_clearLights();
     }
 }
 
@@ -205,9 +205,9 @@ void f_stoppedObstruction( signal_t signal ) {
              if ( directionToGo( lastFloorReached, getNextOrder( lastFloorReached) ) == 0 )
                 lastDirection *= -1;
              else
-                lastDirection = directionToGo( lastFloorReached, getNextOrder( lastFloorReached) ); 
+                lastDirection = directionToGo( lastFloorReached, getNextOrder( lastFloorReached) );
             currentState = MOVEOBSTRUCTION;
-            elev_set_stop_lamp( 0 ); 
+            elev_set_stop_lamp( 0 );
             break;
         default:
             break;
@@ -219,13 +219,13 @@ void stateMachine( signal_t signal ) {
         case IDLE:
             f_idle( signal );
             break;
-          
+
         case MOVING:
             f_moving( signal );
             break;
 
         case MOVEOBSTRUCTION:
-            f_moveObstruction( signal );   
+            f_moveObstruction( signal );
             break;
 
         case DOOROPEN:
@@ -238,7 +238,7 @@ void stateMachine( signal_t signal ) {
         case DOOROBSTRUCTION:
             f_doorObstruction( signal );
             break;
-            
+
         case STOPPED:
             f_stopped( signal );
             break;

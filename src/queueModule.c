@@ -5,7 +5,7 @@
 
 Queue_t queue;
 
-void addOrder( elev_button_type_t button_type, int floor ) {    
+void addOrder( elev_button_type_t button_type, int floor ) {
     switch( button_type )
     {
         case BUTTON_COMMAND:
@@ -45,9 +45,9 @@ void delOrder( int floor, direction_t rideDir ) {
     queue.noDir[ floor ] = 0;
     queue.upDir[ floor ] = 0;
     queue.downDir[ floor ] = 0;
-    if ( floor != (N_FLOORS - 1) ) 
+    if ( floor != (N_FLOORS - 1) )
         elev_set_button_lamp( BUTTON_CALL_UP, floor, 0 );
-    if ( floor != 0 ) 
+    if ( floor != 0 )
         elev_set_button_lamp( BUTTON_CALL_DOWN, floor, 0 );
     elev_set_button_lamp( BUTTON_COMMAND, floor, 0 );
 }
@@ -90,7 +90,7 @@ int getNextOrder( int floor ) {
             if( queue.downDir[ i ] )
                 return i;
         }
-        for ( i = floor; i >= 0; --i) {
+        for ( i = floor; i >= 0; --i ) {
             if( queue.downDir[ i ] || queue.upDir[ i ] || queue.noDir[ i ] )
                 return i;
         }
@@ -132,11 +132,11 @@ int order() {
             }
         }
         for ( i = 1; i < (N_FLOORS); ++i ) {
-            if ( elev_get_button_signal( BUTTON_CALL_DOWN, i ) && !isStopped() ) {   
+            if ( elev_get_button_signal( BUTTON_CALL_DOWN, i ) && !isStopped() ) {
                 addOrder( BUTTON_CALL_DOWN, i );
                 isOrder = 1;
             }
-        } 
+        }
     }
    return isOrder;
 }
